@@ -88,7 +88,7 @@ func main() {
     })
 
     // 可以匹配 /user/nick 和 /user/nick/add
-    // 如果没有其他的路由匹配 /user/nick ， 它将重定向到 /user/john/
+    // 如果没有其他的路由匹配 /user/nick ， 它将重定向到 /user/nick/
     router.GET("/user/:name/*action", func(c *gin.Context) {
         name := c.Param("name")
         action := c.Param("action")
