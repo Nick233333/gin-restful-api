@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"net/http"
 	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -20,7 +21,7 @@ func main() {
 	router.OPTIONS("/options", optinsMethod)
 
 	v1 := router.Group("/v1")
-	{	
+	{
 		// /v1/test
 		v1.GET("/test", testMethod)
 	}
@@ -31,7 +32,6 @@ func main() {
 
 	router.GET("/middleware", middleware1, middleware2, handler)
 
-
 	// url为 /welcome?name=Jane&age=18
 	router.GET("/welcome", func(c *gin.Context) {
 		// 获取参数内容
@@ -39,7 +39,7 @@ func main() {
 		// 如果不存在，使用第二个当做默认内容
 		name := c.DefaultQuery("name", "Guest")
 		// 获取参数内容，没有则返回空字符串
-		age := c.Query("age") 
+		age := c.Query("age")
 
 		c.String(http.StatusOK, "Hello %s %s", name, age)
 	})
@@ -60,7 +60,7 @@ func main() {
 
 		c.JSON(200, gin.H{
 			"message": message,
-			"nick": nick,
+			"nick":    nick,
 		})
 	})
 
@@ -72,7 +72,6 @@ func main() {
 		})
 	})
 
-
 	router.DELETE("/delete-form", func(c *gin.Context) {
 		id := c.DefaultPostForm("id", "0")
 
@@ -80,24 +79,30 @@ func main() {
 			"id": id,
 		})
 	})
-		
+
 	// url 匹配 /user/nick ， 但是它不会匹配 /user
-    router.GET("/user/:name", func(c *gin.Context) {
-        name := c.Param("name")
-        c.String(http.StatusOK, "Hello %s", name)
-    })
+	router.GET("/user/:name", func(c *gin.Context) {
+		name := c.Param("name")
+		c.String(http.StatusOK, "Hello %s", name)
+	})
 
-    // 可以匹配 /user/nick 和 /user/nick/add
-    // 如果没有其他的路由匹配 /user/nick ， 它将重定向到 /user/nick/
-    router.GET("/user/:name/*action", func(c *gin.Context) {
-        name := c.Param("name")
-        action := c.Param("action")
-        message := name + " is " + action
-        c.String(http.StatusOK, message)
-    })
+	// 可以匹配 /user/nick 和 /user/nick/add
+	// 如果没有其他的路由匹配 /user/nick ， 它将重定向到 /user/nick/
+	router.GET("/user/:name/*action", func(c *gin.Context) {
+		name := c.Param("name")
+		action := c.Param("action")
+		message := name + " is " + action
+		c.String(http.StatusOK, message)
+	})
 
+	router.GET("/404", NotFound)
+	router.GET("/301", Redirect)
+	router.GET("/302", func(c *gin.Context) {
+		c.Request.URL.Path = "/get"
+		router.HandleContext(c)
+	})
 
-	// 默认绑定 :8080 
+	// 默认绑定 :8080
 	// 必须双引号
 	router.Run(":8081")
 }
@@ -106,7 +111,7 @@ func main() {
 * 根请求处理函数
 * 所有本次请求相关的方法都在 context 中，完美
 * 输出响应 hello, world
-*/
+ */
 func WebRoot(context *gin.Context) {
 	context.String(http.StatusOK, "hello, world")
 }
@@ -150,9 +155,9 @@ func demoMethod(context *gin.Context) {
 
 func middleware1(c *gin.Context) {
 	log.Println("run middleware1")
-  
+
 	//逻辑代码
-  
+
 	// 执行该中间件之后的逻辑
 	c.Next()
 }
@@ -163,7 +168,7 @@ func middleware2(c *gin.Context) {
 	c.Next()
 	// 流程中的其他逻辑已经执行完了
 	log.Println("run middleware2")
-  
+
 	//逻辑代码
 }
 
@@ -172,6 +177,10 @@ func handler(c *gin.Context) {
 	c.String(http.StatusOK, "middleware")
 }
 
+func NotFound(c *gin.Context) {
+	c.JSON(404, gin.H{"message": "404 Not Found"})
+}
 
-
-
+func Redirect(c *gin.Context) {
+	c.Redirect(http.StatusMovedPermanently, "https://github.com/nick233333")
+}
