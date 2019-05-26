@@ -1,7 +1,9 @@
 package routers
 
 import (
+	"gin-restful-api/middleware/jwt"
 	"gin-restful-api/pkg/setting"
+	"gin-restful-api/routers/api"
 	v1 "gin-restful-api/routers/api/v1"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +18,10 @@ func InitRouter() *gin.Engine {
 
 	gin.SetMode(setting.RunMode)
 
+	r.POST("/auth", api.GetAuth)
+
 	apiv1 := r.Group("/api/v1")
+	apiv1.Use(jwt.JWT())
 	{
 		//获取标签列表
 		apiv1.GET("/tags", v1.GetTags)
