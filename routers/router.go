@@ -3,8 +3,10 @@ package routers
 import (
 	"gin-restful-api/middleware/jwt"
 	"gin-restful-api/pkg/setting"
+	"gin-restful-api/pkg/upload"
 	"gin-restful-api/routers/api"
 	v1 "gin-restful-api/routers/api/v1"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,6 +21,8 @@ func InitRouter() *gin.Engine {
 	gin.SetMode(setting.ServerSetting.RunMode)
 
 	r.POST("/auth", api.GetAuth)
+	r.POST("/upload", api.UploadImage)
+	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
 
 	apiv1 := r.Group("/api/v1")
 	apiv1.Use(jwt.JWT())
