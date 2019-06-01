@@ -1,6 +1,6 @@
 .idea/
 .DS_Store
 
-#!runtime/.gitkeep
-runtime/logs/
-runtime/upload/images/
+
+runtime/
+!runtime/.gitkeep
