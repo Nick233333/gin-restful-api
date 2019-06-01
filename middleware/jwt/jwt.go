@@ -1,40 +1,37 @@
 package jwt
 
 import (
-	"net/http"
+	"gin-restful-api/pkg/app"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
-	"gin-restful-api/pkg/e"
 	"gin-restful-api/pkg/util"
 )
 
 func JWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var code int
+		var code int = 200
+		var msg string = ""
 		var data interface{}
+		app := app.Gin{C: c}
 		token := ""
-		code = e.SUCCESS
 		token = c.Request.Header.Get("Token")
 		if token == "" {
-			code = e.INVALID_PARAMS
-		} else {
-			claims, err := util.ParseToken(token)
-			if err != nil {
-				code = e.ERROR_AUTH_CHECK_TOKEN_FAIL
-			} else if time.Now().Unix() > claims.ExpiresAt {
-				code = e.ERROR_AUTH_CHECK_TOKEN_TIMEOUT
-			}
+			code = 400
+			msg = "参数错误"
+		}
+		claims, err := util.ParseToken(token)
+		if err != nil {
+			code = 500
+			msg = "验证失败"
+		} else if time.Now().Unix() > claims.ExpiresAt {
+			code = 401
+			msg = "token已过期"
 		}
 
-		if code != e.SUCCESS {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"code": code,
-				"msg":  e.GetMsg(code),
-				"data": data,
-			})
-
+		if code != 200 {
+			app.Response(code, msg, data)
 			c.Abort()
 			return
 		}
