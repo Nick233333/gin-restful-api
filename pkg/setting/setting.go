@@ -51,7 +51,7 @@ func Setup() {
 	var err error
 	cfg, err = ini.Load("conf/app.ini")
 	if err != nil {
-		log.Fatalf("setting.Setup, fail to parse 'conf/app.ini': %v", err)
+		log.Fatalf("加载错误 'conf/app.ini': %v", err)
 	}
 
 	mapTo("app", AppSetting)
@@ -63,10 +63,9 @@ func Setup() {
 	ServerSetting.WriteTimeout = ServerSetting.ReadTimeout * time.Second
 }
 
-// mapTo map section
 func mapTo(section string, v interface{}) {
 	err := cfg.Section(section).MapTo(v)
 	if err != nil {
-		log.Fatalf("Cfg.MapTo RedisSetting err: %v", err)
+		log.Fatalf("配置映射错误: %v", err)
 	}
 }
