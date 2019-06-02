@@ -1,11 +1,13 @@
 package routers
 
 import (
+	"gin-restful-api/controllers/article"
+	"gin-restful-api/controllers/auth"
+	"gin-restful-api/controllers/tag"
+	"gin-restful-api/controllers/upload"
 	"gin-restful-api/middleware/jwt"
+	"gin-restful-api/pkg/images"
 	"gin-restful-api/pkg/setting"
-	"gin-restful-api/pkg/upload"
-	"gin-restful-api/routers/api"
-	v1 "gin-restful-api/routers/api/v1"
 	"net/http"
 	"time"
 
@@ -21,32 +23,32 @@ func InitRouter() *gin.Engine {
 
 	gin.SetMode(setting.ServerSetting.RunMode)
 
-	r.POST("/auth", api.GetAuth)
-	r.POST("/upload", api.UploadImage)
-	r.StaticFS("/upload/images/"+time.Now().Format(setting.AppSetting.TimeFormat)+"/", http.Dir(upload.GetImageFullPath()))
+	r.POST("/auth", auth.GetAuth)
+	r.POST("/upload", upload.UploadImage)
+	r.StaticFS("/upload/images/"+time.Now().Format(setting.AppSetting.TimeFormat)+"/", http.Dir(images.GetImageFullPath()))
 
 	apiv1 := r.Group("/api/v1")
 	apiv1.Use(jwt.JWT())
 	{
 		//获取标签列表
-		apiv1.GET("/tags", v1.GetTags)
+		apiv1.GET("/tags", tag.GetTags)
 		//新建标签
-		apiv1.POST("/tags", v1.AddTag)
+		apiv1.POST("/tags", tag.AddTag)
 		//更新指定标签
-		apiv1.PUT("/tags/:id", v1.EditTag)
+		apiv1.PUT("/tags/:id", tag.EditTag)
 		//删除指定标签
-		apiv1.DELETE("/tags/:id", v1.DeleteTag)
+		apiv1.DELETE("/tags/:id", tag.DeleteTag)
 
 		//获取文章列表
-		apiv1.GET("/articles", v1.GetArticles)
+		apiv1.GET("/articles", article.GetArticles)
 		//获取指定文章
-		apiv1.GET("/articles/:id", v1.GetArticle)
+		apiv1.GET("/articles/:id", article.GetArticle)
 		//新建文章
-		apiv1.POST("/articles", v1.AddArticle)
+		apiv1.POST("/articles", article.AddArticle)
 		//更新指定文章
-		apiv1.PUT("/articles/:id", v1.EditArticle)
+		apiv1.PUT("/articles/:id", article.EditArticle)
 		//删除指定文章
-		apiv1.DELETE("/articles/:id", v1.DeleteArticle)
+		apiv1.DELETE("/articles/:id", article.DeleteArticle)
 	}
 
 	return r

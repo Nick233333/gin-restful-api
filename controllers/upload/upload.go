@@ -1,11 +1,10 @@
-package api
+package upload
 
 import (
 	"github.com/gin-gonic/gin"
 
 	"gin-restful-api/pkg/app"
-	"gin-restful-api/pkg/logging"
-	"gin-restful-api/pkg/upload"
+	"gin-restful-api/pkg/images"
 )
 
 func UploadImage(c *gin.Context) {
@@ -14,8 +13,7 @@ func UploadImage(c *gin.Context) {
 	app := app.Gin{C: c}
 	file, image, err := c.Request.FormFile("image")
 	if err != nil {
-		logging.Warn(err)
-		app.Response(500, "err", nil)
+		app.Response(400, "err", nil)
 		return
 	}
 
@@ -23,17 +21,17 @@ func UploadImage(c *gin.Context) {
 		app.Response(400, "请求参数错误", nil)
 		return
 	}
-	imageName := upload.GetImageName(image.Filename)
-	fullPath := upload.GetImageFullPath()
-	savePath := upload.GetImagePath()
+	imageName := images.GetImageName(image.Filename)
+	fullPath := images.GetImageFullPath()
+	savePath := images.GetImagePath()
 
 	src := fullPath + imageName
-	if !upload.CheckImageExt(imageName) || !upload.CheckImageSize(file) {
+	if !images.CheckImageExt(imageName) || !images.CheckImageSize(file) {
 		app.Response(400, "图片类型不允许上传", nil)
 		return
 	}
 
-	if err := upload.CheckImage(fullPath); err != nil {
+	if err := images.CheckImage(fullPath); err != nil {
 		app.Response(400, "校验图片错误，图片格式或大小有问题", nil)
 		return
 	}
@@ -41,7 +39,7 @@ func UploadImage(c *gin.Context) {
 		app.Response(500, "保存图片失败", nil)
 		return
 	}
-	data["image_url"] = upload.GetImageFullUrl(imageName)
+	data["image_url"] = images.GetImageFullUrl(imageName)
 	data["image_save_url"] = savePath + imageName
 	app.Response(200, "ok", data)
 	return

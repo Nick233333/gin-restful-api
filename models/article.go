@@ -18,6 +18,7 @@ type Article struct {
 	CreatedBy  string `json:"created_by"`
 	ModifiedBy string `json:"modified_by"`
 	State      int    `json:"state"`
+	ImageUrl   string `json:"image_url"`
 }
 
 func (article *Article) BeforeCreate(scope *gorm.Scope) error {
@@ -76,6 +77,7 @@ func AddArticle(data map[string]interface{}) bool {
 		Content:   data["content"].(string),
 		CreatedBy: data["created_by"].(string),
 		State:     data["state"].(int),
+		ImageUrl:  data["image_url"].(string),
 	})
 
 	return true

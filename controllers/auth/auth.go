@@ -1,4 +1,4 @@
-package api
+package auth
 
 import (
 	"github.com/astaxie/beego/validation"
@@ -44,11 +44,11 @@ func GetAuth(c *gin.Context) {
 	isExist, err := models.CheckAuth(username, password)
 
 	if err != nil {
-		app.Response(500, "Token鉴权失败", nil)
+		app.Response(400, "Token鉴权失败", nil)
 		return
 	}
 	if !isExist {
-		app.Response(400, "验证失败", nil)
+		app.Response(400, "token验证失败", nil)
 		return
 	}
 	token, err := util.GenerateToken(username, password)
