@@ -7,6 +7,7 @@ import (
 	"gin-restful-api/routers/api"
 	v1 "gin-restful-api/routers/api/v1"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +23,7 @@ func InitRouter() *gin.Engine {
 
 	r.POST("/auth", api.GetAuth)
 	r.POST("/upload", api.UploadImage)
-	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
+	r.StaticFS("/upload/images/"+time.Now().Format(setting.AppSetting.TimeFormat)+"/", http.Dir(upload.GetImageFullPath()))
 
 	apiv1 := r.Group("/api/v1")
 	apiv1.Use(jwt.JWT())

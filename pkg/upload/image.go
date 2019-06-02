@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"time"
 
 	"gin-restful-api/pkg/file"
 	"gin-restful-api/pkg/logging"
@@ -27,7 +28,7 @@ func GetImageName(name string) string {
 }
 
 func GetImagePath() string {
-	return setting.AppSetting.ImageSavePath
+	return setting.AppSetting.ImageSavePath + time.Now().Format(setting.AppSetting.TimeFormat) + "/"
 }
 
 func GetImageFullPath() string {
