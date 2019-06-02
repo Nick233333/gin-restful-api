@@ -5,6 +5,7 @@ import (
 	"gin-restful-api/controllers/auth"
 	"gin-restful-api/controllers/tag"
 	"gin-restful-api/controllers/upload"
+	"gin-restful-api/middleware/cors"
 	"gin-restful-api/middleware/jwt"
 	"gin-restful-api/pkg/images"
 	"gin-restful-api/pkg/setting"
@@ -18,10 +19,8 @@ func InitRouter() *gin.Engine {
 	r := gin.New()
 
 	r.Use(gin.Logger())
-
 	r.Use(gin.Recovery())
-
-	gin.SetMode(setting.ServerSetting.RunMode)
+	r.Use(cors.CORS())
 
 	r.POST("/auth", auth.GetAuth)
 	r.POST("/upload", upload.UploadImage)
