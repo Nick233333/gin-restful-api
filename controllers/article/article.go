@@ -3,7 +3,6 @@ package article
 import (
 	"gin-restful-api/models"
 	"gin-restful-api/pkg/app"
-	"gin-restful-api/pkg/logging"
 	"gin-restful-api/pkg/setting"
 	"gin-restful-api/pkg/util"
 
@@ -18,7 +17,6 @@ func GetArticle(c *gin.Context) {
 	app := app.Gin{C: c}
 	valid := validation.Validation{}
 	if v := valid.Required(id, "id").Message("id不能为空"); !v.Ok {
-		logging.Info(v.Error.Key, v.Error.Message)
 		app.Response(400, v.Error.Message, nil)
 		return
 	}
@@ -45,7 +43,6 @@ func GetArticles(c *gin.Context) {
 		state = com.StrTo(arg).MustInt()
 		maps["state"] = state
 		if v := valid.Range(state, 0, 1, "state").Message("状态只允许0或1"); !v.Ok {
-			logging.Info(v.Error.Key, v.Error.Message)
 			app.Response(400, v.Error.Message, nil)
 			return
 		}
@@ -56,7 +53,6 @@ func GetArticles(c *gin.Context) {
 		tagId = com.StrTo(arg).MustInt()
 		maps["tag_id"] = tagId
 		if v := valid.Min(tagId, 1, "tag_id").Message("标签ID必须大于0"); !v.Ok {
-			logging.Info(v.Error.Key, v.Error.Message)
 			app.Response(400, v.Error.Message, nil)
 			return
 		}
@@ -211,7 +207,6 @@ func DeleteArticle(c *gin.Context) {
 	app := app.Gin{C: c}
 	valid := validation.Validation{}
 	if v := valid.Min(id, 1, "id").Message("ID必须大于0"); !v.Ok {
-		logging.Info(v.Error.Key, v.Error.Message)
 		app.Response(400, v.Error.Message, nil)
 		return
 	}

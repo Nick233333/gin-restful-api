@@ -22,7 +22,3 @@ func CreateRedis() *redis.Client {
 	return RedisClient
 
 }
-
-func CloseRedis() {
-	defer RedisClient.Close()
-}

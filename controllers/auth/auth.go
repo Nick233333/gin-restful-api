@@ -6,7 +6,6 @@ import (
 
 	"gin-restful-api/models"
 	"gin-restful-api/pkg/app"
-	"gin-restful-api/pkg/logging"
 	"gin-restful-api/pkg/util"
 )
 
@@ -29,7 +28,6 @@ func GetAuth(c *gin.Context) {
 	}
 
 	if v := valid.MaxSize(a.Username, 50, "username").Message("长度不能超过50"); !v.Ok {
-		logging.Info(v.Error.Key, v.Error.Message)
 		app.Response(400, v.Error.Message, nil)
 		return
 	}
