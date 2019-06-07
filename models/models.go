@@ -34,6 +34,7 @@ func Setup() {
 		return setting.DatabaseSetting.TablePrefix + defaultTableName
 	}
 
+	// db.LogMode(true)
 	db.SingularTable(true)
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
