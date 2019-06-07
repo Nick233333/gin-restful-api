@@ -1,10 +1,13 @@
 package article
 
 import (
+	"encoding/json"
+	"gin-restful-api/cache/redis"
 	"gin-restful-api/models"
 	"gin-restful-api/pkg/app"
 	"gin-restful-api/pkg/setting"
 	"gin-restful-api/pkg/util"
+	"time"
 
 	"github.com/Unknwon/com"
 	"github.com/astaxie/beego/validation"
@@ -21,8 +24,22 @@ func GetArticle(c *gin.Context) {
 		return
 	}
 	var data interface{}
+	redisClient := redis.CreateRedis()
+
+	val, err := redisClient.Get("Article:" + c.Param("id")).Result()
+	if err == nil {
+		json.Unmarshal([]byte(val), &data)
+		app.Response(200, "ok", data)
+		return
+	}
+
 	if models.ExistArticleByID(id) {
 		data = models.GetArticle(id)
+		strJson := util.InterfaceToJson(data)
+		err := redisClient.Set("Article:"+c.Param("id"), strJson, 60*60*time.Second).Err()
+		if err != nil {
+			panic(err)
+		}
 		app.Response(200, "ok", data)
 		return
 	}
@@ -187,6 +204,8 @@ func EditArticle(c *gin.Context) {
 			data["modified_by"] = modifiedBy
 
 			models.EditArticle(id, data)
+			redisClient := redis.CreateRedis()
+			redisClient.Del("Article:" + c.Param("id"))
 			app.Response(200, "ok", nil)
 			return
 		} else {
@@ -213,6 +232,8 @@ func DeleteArticle(c *gin.Context) {
 
 	if models.ExistArticleByID(id) {
 		models.DeleteArticle(id)
+		redisClient := redis.CreateRedis()
+		redisClient.Del("Article:" + c.Param("id"))
 		app.Response(200, "删除成功", nil)
 		return
 	} else {
