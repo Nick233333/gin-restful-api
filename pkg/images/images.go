@@ -2,7 +2,6 @@ package images
 
 import (
 	"fmt"
-	"log"
 	"mime/multipart"
 	"os"
 	"path"
@@ -49,7 +48,6 @@ func CheckImageExt(fileName string) bool {
 func CheckImageSize(f multipart.File) bool {
 	size, err := file.GetSize(f)
 	if err != nil {
-		log.Println(err)
 		logging.Warn(err)
 		return false
 	}
