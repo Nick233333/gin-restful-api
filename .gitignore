@@ -4,5 +4,5 @@ main
 
 runtime/
 !runtime/.gitkeep
-#/vendor/*
-#!/vendor/vendor.json
+/vendor/*
+!/vendor/vendor.json
