@@ -22,6 +22,16 @@ func InitRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 	r.Use(cors.CORS())
 
+	// 未知路由
+	r.NoRoute(func(c *gin.Context) {
+		c.String(404, "未找到路由地址")
+	})
+	// 未知调用方式
+	r.HandleMethodNotAllowed = true
+	r.NoMethod(func(c *gin.Context) {
+		c.String(404, "错误调用方法")
+	})
+
 	r.POST("/auth", auth.GetAuth)
 	r.POST("/upload", upload.UploadImage)
 	r.StaticFS("/upload/images/"+time.Now().Format(setting.AppSetting.TimeFormat)+"/", http.Dir(images.GetImageFullPath()))
